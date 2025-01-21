@@ -1,6 +1,9 @@
 PHP_ARG_ENABLE(immutable_cache, whether to enable immutable_cache support,
-[  --enable-immutable-cache           Enable immutable_cache support])
+[  --enable-immutable_cache         Enable immutable_cache support])
 
+PHP_ADD_EXTENSION_DEP(immutable_cache, random)
+
+PHP_ADD_INCLUDE(/opt/homebrew/opt/pcre2/include)
 AC_MSG_CHECKING(if immutable_cache should be allowed to use rwlocks)
 AC_ARG_ENABLE(immutable-cache-rwlocks,
 [  --disable-immutable-cache-rwlocks  Disable rwlocks in immutable_cache],
@@ -62,7 +65,6 @@ AC_MSG_RESULT($PHP_IMMUTABLE_CACHE_SPINLOCK)
 
 if test "$PHP_IMMUTABLE_CACHE_RWLOCKS" != "no"; then
   AC_CACHE_CHECK([whether the target compiler supports builtin atomics], PHP_cv_IMMUTABLE_CACHE_GCC_ATOMICS, [
-
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[
         int foo = 0;
         __sync_add_and_fetch(&foo, 1);
@@ -95,8 +97,8 @@ if test "$PHP_IMMUTABLE_CACHE" != "no"; then
     AC_MSG_ERROR([failed to detect PHP version, please report])
   fi
 
-  if test "$php_version" -lt "70200"; then
-    AC_MSG_ERROR([You need at least PHP 7.2.0 to be able to use this version of immutable_cache. PHP $php_version found])
+  if test "$php_version" -lt "80400"; then
+    AC_MSG_ERROR([You need at least PHP 8.4.0 to be able to use this version of immutable_cache. PHP $php_version found])
   else
     AC_MSG_RESULT([$php_version, ok])
   fi
@@ -267,11 +269,12 @@ if test "$PHP_IMMUTABLE_CACHE" != "no"; then
                  immutable_cache_persist.c"
 
   PHP_CHECK_LIBRARY(rt, shm_open, [PHP_ADD_LIBRARY(rt,,IMMUTABLE_CACHE_SHARED_LIBADD)])
-  PHP_NEW_EXTENSION(immutable_cache, $immutable_cache_sources, $ext_shared,, \\$(IMMUTABLE_CACHE_CFLAGS))
+  PHP_ADD_INCLUDE(/opt/homebrew/Cellar/php/8.4.3/include/php/ext/standard)
+  PHP_NEW_EXTENSION(immutable_cache, $immutable_cache_sources, $ext_shared,, -DZEND_COMPILE_DL_EXT=1$(IMMUTABLE_CACHE_CFLAGS))
   PHP_SUBST(IMMUTABLE_CACHE_SHARED_LIBADD)
   PHP_SUBST(IMMUTABLE_CACHE_CFLAGS)
   PHP_SUBST(PHP_LDFLAGS)
-  PHP_INSTALL_HEADERS(ext/immutable_cache, [php_immutable_cache.h immutable_cache.h immutable_cache_api.h immutable_cache_cache.h immutable_cache_globals.h immutable_cache_iterator.h immutable_cache_lock.h immutable_cache_mutex.h immutable_cache_sma.h immutable_cache_serializer.h immutable_cache_stack.h immutable_cache_arginfo.h php_immutable_cache_legacy_arginfo.h])
+  PHP_INSTALL_HEADERS(ext/immutable_cache, [php_immutable_cache.h immutable_cache.h immutable_cache_api.h immutable_cache_cache.h immutable_cache_globals.h immutable_cache_iterator.h immutable_cache_lock.h immutable_cache_mutex.h immutable_cache_sma.h immutable_cache_serializer.h immutable_cache_stack.h immutable_cache_arginfo.h php_immutable_cache_legacy_arginfo.h php_immutable_cache_php84_arginfo.h])
   AC_DEFINE(HAVE_IMMUTABLE_CACHE, 1, [ ])
 fi
 

@@ -46,7 +46,12 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#include <ext/standard/php_rand.h>
+#if PHP_VERSION_ID >= 80200
+# include "ext/random/php_random.h"
+#else
+# include "ext/standard/php_rand.h"
+#endif
+#include "php.h"
 #endif
 
 #ifndef SHM_R

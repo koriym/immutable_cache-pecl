@@ -54,8 +54,10 @@
 #include "ext/standard/flock_compat.h"
 #include "ext/standard/md5.h"
 #include "ext/standard/php_var.h"
-#if PHP_VERSION_ID >= 80000
-# include "php_immutable_cache_arginfo.h"
+#if PHP_VERSION_ID >= 80000 && PHP_VERSION_ID < 84000
+# include "php_immutable_cache_php84_arginfo.h"
+#elif PHP_VERSION_ID >= 84000
+# include "php_immutable_cache_php84_arginfo.h"
 #else
 # include "php_immutable_cache_legacy_arginfo.h"
 #endif
@@ -116,7 +118,9 @@ static PHP_INI_MH(OnUpdateShmSegments) /* {{{ */
 
 static PHP_INI_MH(OnUpdateShmSize) /* {{{ */
 {
-#if PHP_VERSION_ID >= 80200
+#if PHP_VERSION_ID >= 84000
+	zend_long s = zend_ini_parse_quantity_warn(new_value, entry->name);
+#elif PHP_VERSION_ID >= 80200
 	zend_long s = zend_ini_parse_quantity_warn(new_value, entry->name);
 #else
 	zend_long s = zend_atol(new_value->val, new_value->len);
@@ -633,6 +637,17 @@ static const zend_module_dep immutable_cache_deps[] = {
 };
 
 /* {{{ module definition structure */
+
+ZEND_DLEXPORT const zend_function_entry ext_functions[] = {
+	ZEND_FE(immutable_cache_enabled, arginfo_immutable_cache_enabled)
+	ZEND_FE(immutable_cache_add, arginfo_immutable_cache_add)
+	ZEND_FE(immutable_cache_fetch, arginfo_immutable_cache_fetch)
+	ZEND_FE(immutable_cache_exists, arginfo_immutable_cache_exists)
+	ZEND_FE(immutable_cache_cache_info, arginfo_immutable_cache_cache_info)
+	ZEND_FE(immutable_cache_key_info, arginfo_immutable_cache_key_info)
+	ZEND_FE(immutable_cache_sma_info, arginfo_immutable_cache_sma_info)
+	ZEND_FE_END
+};
 
 zend_module_entry immutable_cache_module_entry = {
 	STANDARD_MODULE_HEADER_EX,
