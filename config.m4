@@ -269,7 +269,7 @@ if test "$PHP_IMMUTABLE_CACHE" != "no"; then
                  immutable_cache_persist.c"
 
   PHP_CHECK_LIBRARY(rt, shm_open, [PHP_ADD_LIBRARY(rt,,IMMUTABLE_CACHE_SHARED_LIBADD)])
-  PHP_ADD_INCLUDE(/opt/homebrew/Cellar/php/8.4.3/include/php/ext/standard)
+  PHP_ADD_INCLUDE(`$PHP_CONFIG --include-dir`/ext/standard)
   PHP_NEW_EXTENSION(immutable_cache, $immutable_cache_sources, $ext_shared,, -DZEND_COMPILE_DL_EXT=1$(IMMUTABLE_CACHE_CFLAGS))
   PHP_SUBST(IMMUTABLE_CACHE_SHARED_LIBADD)
   PHP_SUBST(IMMUTABLE_CACHE_CFLAGS)
