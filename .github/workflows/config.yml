@@ -71,8 +71,8 @@ jobs:
       fail-fast: false
       matrix:
        include:
-         - PHP_VERSION: '8.5'
-           PHP_VERSION_FULL: 8.5.0
+         - PHP_VERSION: '8.5-rc'
+           PHP_VERSION_FULL: 8.5.0RC4
     steps:
       - uses: actions/checkout@v4
       - name: Build and test in docker
@@ -84,16 +84,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          version: ["7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+          version: ["8.0", "8.1", "8.2", "8.3", "8.4"]
           arch: [x64]
           ts: [nts, ts]
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout immutable_cache
         uses: actions/checkout@v4
       - name: Setup PHP
         id: setup-php
-        uses: cmb69/setup-php-sdk@v0.7
+        uses: php/setup-php-sdk@v0.10
         with:
           version: ${{matrix.version}}
           arch: ${{matrix.arch}}
