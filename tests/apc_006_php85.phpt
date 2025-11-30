@@ -3,14 +3,12 @@ APC: immutable_cache_add/fetch reference test
 --SKIPIF--
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
-if (PHP_VERSION_ID < 80100) die('skip Only for PHP >= 8.1');
-if (PHP_VERSION_ID >= 80500) die('skip Only for PHP < 8.5');
+if (PHP_VERSION_ID < 80500) die('skip Only for PHP >= 8.5');
 ?>
 --INI--
 immutable_cache.enabled=1
 immutable_cache.enable_cli=1
 immutable_cache.serializer=php
-report_memleaks=0
 --FILE--
 <?php
 
