@@ -2,6 +2,7 @@
 Error if cache structures cannot be allocated in SHM
 --SKIPIF--
 <?php
+require_once(dirname(__FILE__) . '/skipif.inc');
 if (PHP_VERSION_ID >= 80500) die('skip Only for PHP < 8.5');
 ?>
 --INI--
