@@ -14,5 +14,4 @@ immutable_cache.entries_hint=1000000
 Irrelevant
 --EXPECTF--
 %A: Unable to allocate %d bytes of shared memory for cache structures. Either immutable_cache.shm_size is too small or immutable_cache.entries_hint too large in Unknown on line 0
-Stack trace:
-#0 {main}
+%A

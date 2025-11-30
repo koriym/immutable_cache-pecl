@@ -16,5 +16,4 @@ class foobar extends ImmutableCacheIterator {
 ?>
 --EXPECTF--
 Fatal error: Class foobar%sfinal class%sImmutableCacheIterator%sin %s on line %d
-Stack trace:
-#0 {main}
+%A
