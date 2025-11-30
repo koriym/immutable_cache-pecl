@@ -6,6 +6,9 @@ require_once(__DIR__ . '/server_skipif.inc');
 if (PHP_ZTS === 1) {
     die('skip PHP non-ZTS only');
 }
+if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80400) {
+    die('skip preload_path not working on Windows PHP 8.4+');
+}
 ?>
 --CONFLICTS--
 server
