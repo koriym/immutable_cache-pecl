@@ -3,11 +3,8 @@ APC: Bug #61742 preload_path does not work due to incorrect string length (varia
 --SKIPIF--
 <?php
 require_once(__DIR__ . '/server_skipif.inc');
-if (PHP_ZTS === 1) {
+if (PHP_ZTS) {
     die('skip PHP non-ZTS only');
-}
-if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80400) {
-    die('skip preload_path not working on Windows PHP 8.4+');
 }
 ?>
 --CONFLICTS--
