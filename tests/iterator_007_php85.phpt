@@ -4,6 +4,7 @@ APC: ImmutableCacheIterator Subclassing forbidden
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
 if (PHP_VERSION_ID < 80500) die('skip Only for PHP >= 8.5');
+if (PHP_OS_FAMILY === 'Windows') die('skip Stack trace output differs on Windows');
 ?>
 --INI--
 immutable_cache.enabled=1
@@ -16,4 +17,5 @@ class foobar extends ImmutableCacheIterator {
 ?>
 --EXPECTF--
 Fatal error: Class foobar%sfinal class%sImmutableCacheIterator%sin %s on line %d
-%A
+Stack trace:
+#0 {main}

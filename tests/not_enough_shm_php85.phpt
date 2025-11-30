@@ -4,6 +4,7 @@ Error if cache structures cannot be allocated in SHM
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
 if (PHP_VERSION_ID < 80500) die('skip Only for PHP >= 8.5');
+if (PHP_OS_FAMILY === 'Windows') die('skip Stack trace output differs on Windows');
 ?>
 --INI--
 immutable_cache.enabled=1
@@ -14,4 +15,5 @@ immutable_cache.entries_hint=1000000
 Irrelevant
 --EXPECTF--
 %A: Unable to allocate %d bytes of shared memory for cache structures. Either immutable_cache.shm_size is too small or immutable_cache.entries_hint too large in Unknown on line 0
-%A
+Stack trace:
+#0 {main}
