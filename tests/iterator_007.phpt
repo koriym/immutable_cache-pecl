@@ -1,7 +1,10 @@
 --TEST--
 APC: ImmutableCacheIterator Subclassing forbidden
 --SKIPIF--
-<?php require_once(dirname(__FILE__) . '/skipif.inc'); ?>
+<?php
+require_once(dirname(__FILE__) . '/skipif.inc');
+if (PHP_VERSION_ID >= 80500 && PHP_OS_FAMILY !== 'Windows') die('skip For PHP >= 8.5 on non-Windows, see iterator_007_php85.phpt');
+?>
 --INI--
 immutable_cache.enabled=1
 immutable_cache.enable_cli=1
