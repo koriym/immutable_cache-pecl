@@ -46,7 +46,6 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#include <ext/standard/php_rand.h>
 #endif
 
 #ifndef SHM_R
@@ -66,7 +65,7 @@ int immutable_cache_shm_create(int proj, size_t size)
 	/* This should call shm_get with a brand new key id that isn't used yet. See https://man7.org/linux/man-pages/man2/shmget.2.html
 	 * Because shmop_open can be used in userland to attach to shared memory segments, use high positive numbers to avoid accidentally conflicting with userland. */
 #ifdef PHP_WIN32
-	key_t key = (php_rand() & 0x1fffffff) + 0x20000007;
+	key_t key = (rand() & 0x1fffffff) + 0x20000007;
 	for (int attempts = 0; attempts < 1000; attempts++) {
 		struct shm_ids;
 		struct shmid_ds out_buf;
@@ -74,7 +73,7 @@ int immutable_cache_shm_create(int proj, size_t size)
 			break;
 		}
 		/* This key already exists according to windows polyfill for shmget */
-		key = (php_rand() & 0x1fffffff) + 0x20000007;
+		key = (rand() & 0x1fffffff) + 0x20000007;
 		attempts++;
 	}
 #else
