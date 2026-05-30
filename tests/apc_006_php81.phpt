@@ -9,7 +9,6 @@ if (PHP_VERSION_ID < 80100) die('skip Only for PHP >= 8.1');
 immutable_cache.enabled=1
 immutable_cache.enable_cli=1
 immutable_cache.serializer=php
-report_memleaks=0
 --FILE--
 <?php
 
