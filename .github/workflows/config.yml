@@ -20,30 +20,30 @@ jobs:
          # and the docker image `php:7` is the latest minor version of php 7.x (7.4).
          - PHP_VERSION: '7.2'
            PHP_VERSION_FULL: 7.2.34
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '7.3'
            PHP_VERSION_FULL: 7.3.32
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '7.4'
            PHP_VERSION_FULL: 7.4.30
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '8.0'
            PHP_VERSION_FULL: 8.0.30
-           VALGRIND: false
+           SKIP_VALGRIND: true
          # TODO: Investigate the cause of the error on 32-bit php builds.
          - PHP_VERSION: '8.0'
            PHP_VERSION_FULL: 8.0.30
            DOCKER_ARCHITECTURE: i386
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '8.1'
            PHP_VERSION_FULL: 8.1.23
          - PHP_VERSION: '8.2'
            PHP_VERSION_FULL: 8.2.10
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '8.2'
            PHP_VERSION_FULL: 8.2.10
            DOCKER_ARCHITECTURE: i386
-           VALGRIND: false
+           SKIP_VALGRIND: true
          - PHP_VERSION: '8.3'
            PHP_VERSION_FULL: 8.3.15
          - PHP_VERSION: '8.3'
@@ -73,7 +73,7 @@ jobs:
       # We need to install valgrind then rebuild php from source with the configure option '--with-valgrind' to avoid valgrind false positives
       # because php-src has inline assembly that causes false positives in valgrind when that option isn't used.
       - name: Build and test in docker again with valgrind
-        if: matrix.VALGRIND != false
+        if: ${{ !matrix.SKIP_VALGRIND }}
         run: bash ci/test_dockerized_valgrind.sh ${{ matrix.PHP_VERSION }} ${{ matrix.PHP_VERSION_FULL }} ${{ matrix.DOCKER_ARCHITECTURE }}
       # NOTE: tests report false positives for zend_string_equals in php 7.3+
       # due to the use of inline assembly in php-src. (not related to igbinary)
