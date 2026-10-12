@@ -3,11 +3,11 @@ Error if cache structures cannot be allocated in SHM
 --SKIPIF--
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
-if (PHP_VERSION_ID >= 80500 && PHP_OS_FAMILY !== 'Windows') die('skip Only for PHP < 8.5 on non-Windows');
 ?>
 --INI--
 immutable_cache.enabled=1
 immutable_cache.enable_cli=1
+fatal_error_backtraces=0
 immutable_cache.shm_size=1M
 immutable_cache.entries_hint=1000000
 --FILE--
