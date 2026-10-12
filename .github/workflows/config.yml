@@ -80,7 +80,7 @@ jobs:
           version: ["8.1", "8.2", "8.3", "8.4", "8.5"]
           arch: [x64]
           ts: [nts, ts]
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
       - name: Checkout immutable_cache
         uses: actions/checkout@v4
