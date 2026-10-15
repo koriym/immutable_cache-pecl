@@ -86,7 +86,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          version: ["7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
+          # PHP 7.x needs the VS2017 (vc15) toolset, which no hosted runner provides.
+          version: ["8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
           arch: [x64]
           ts: [nts, ts]
     runs-on: windows-2022
