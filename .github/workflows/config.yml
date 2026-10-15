@@ -72,6 +72,8 @@ jobs:
       #
       # We need to install valgrind then rebuild php from source with the configure option '--with-valgrind' to avoid valgrind false positives
       # because php-src has inline assembly that causes false positives in valgrind when that option isn't used.
+      # SKIP_VALGRIND: the valgrind image no longer builds (7.2-8.0: valgrind not installable from the
+      # archived apt repos; 8.2.10: php-src fails to compile in zend_atomic.h).
       - name: Build and test in docker again with valgrind
         if: ${{ !matrix.SKIP_VALGRIND }}
         run: bash ci/test_dockerized_valgrind.sh ${{ matrix.PHP_VERSION }} ${{ matrix.PHP_VERSION_FULL }} ${{ matrix.DOCKER_ARCHITECTURE }}
@@ -84,7 +86,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-          version: ["8.1", "8.2", "8.3", "8.4", "8.5"]
+          version: ["7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
           arch: [x64]
           ts: [nts, ts]
     runs-on: windows-2022
