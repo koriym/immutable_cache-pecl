@@ -42,16 +42,13 @@
 /* shm functions are available in TSRM */
 #include <tsrm/tsrm_win32.h>
 #define key_t long
+#if PHP_VERSION_ID < 80300
+#include <ext/standard/php_rand.h>
+#endif
 #else
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#if PHP_VERSION_ID >= 80500
-#include <ext/random/php_random.h>
-#define php_rand() php_mt_rand()
-#else
-#include <ext/standard/php_rand.h>
-#endif
 #endif
 
 #ifndef SHM_R
@@ -68,9 +65,9 @@ int immutable_cache_shm_create(int proj, size_t size)
 
 	oflag = IPC_CREAT | SHM_R | SHM_A;
 
-	/* This should call shm_get with a brand new key id that isn't used yet. See https://man7.org/linux/man-pages/man2/shmget.2.html
+#if defined(PHP_WIN32) && PHP_VERSION_ID < 80300
+	/* TSRM ignores IPC_PRIVATE before PHP 8.1.15 / 8.2.1, so pick an unused key here.
 	 * Because shmop_open can be used in userland to attach to shared memory segments, use high positive numbers to avoid accidentally conflicting with userland. */
-#ifdef PHP_WIN32
 	key_t key = (php_rand() & 0x1fffffff) + 0x20000007;
 	for (int attempts = 0; attempts < 1000; attempts++) {
 		struct shm_ids;

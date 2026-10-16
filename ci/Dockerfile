@@ -2,7 +2,7 @@ ARG PHP_IMAGE
 ARG PHP_VERSION
 FROM $PHP_IMAGE:$PHP_VERSION
 WORKDIR /code
-RUN pecl install igbinary-3.2.8
+RUN pecl install igbinary
 # Used for running tests in Docker
 # RUN apt-get update && apt-get install -y valgrind && apt-get clean
 # NOTE: In order to avoid valgrind false positives, this would need to compile php from source and configure php --with-valgrind (php-src's zend_string_equals uses inline assembly that causes false positives)
