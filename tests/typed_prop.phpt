@@ -3,7 +3,6 @@ Success parameters should respect property types
 --SKIPIF--
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
-version_compare(PHP_VERSION, '7.4.0dev', '>=') or die('skip Requires PHP >= 7.4');
 ?>
 --INI--
 immutable_cache.enabled=1

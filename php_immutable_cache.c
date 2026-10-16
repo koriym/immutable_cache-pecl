@@ -54,12 +54,7 @@
 #include "ext/standard/flock_compat.h"
 #include "ext/standard/md5.h"
 #include "ext/standard/php_var.h"
-#if PHP_VERSION_ID >= 80000
-# include "php_immutable_cache_arginfo.h"
-#else
-# include "php_immutable_cache_legacy_arginfo.h"
-#endif
-#include "immutable_cache_php74_shim.h"
+#include "php_immutable_cache_arginfo.h"
 
 #ifdef HAVE_SYS_FILE_H
 #include <sys/file.h>
@@ -116,11 +111,7 @@ static PHP_INI_MH(OnUpdateShmSegments) /* {{{ */
 
 static PHP_INI_MH(OnUpdateShmSize) /* {{{ */
 {
-#if PHP_VERSION_ID >= 80200
 	zend_long s = zend_ini_parse_quantity_warn(new_value, entry->name);
-#else
-	zend_long s = zend_atol(new_value->val, new_value->len);
-#endif
 
 	if (s <= 0) {
 		return FAILURE;

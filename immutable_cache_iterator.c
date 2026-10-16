@@ -32,11 +32,7 @@
 #include "immutable_cache_cache.h"
 #include "immutable_cache_strings.h"
 #include "immutable_cache_time.h"
-#if PHP_VERSION_ID >= 80000
-# include "immutable_cache_iterator_arginfo.h"
-#else
-# include "immutable_cache_iterator_legacy_arginfo.h"
-#endif
+#include "immutable_cache_iterator_arginfo.h"
 
 #include "ext/standard/md5.h"
 #include "SAPI.h"
@@ -129,9 +125,7 @@ static void immutable_cache_iterator_free(zend_object *object) {
 
 	if (iterator->regex) {
 		zend_string_release(iterator->regex);
-#if PHP_VERSION_ID >= 70300
 		pcre2_match_data_free(iterator->re_match_data);
-#endif
 	}
 
 	if (iterator->search_hash) {
@@ -169,17 +163,10 @@ static int immutable_cache_iterator_search_match(immutable_cache_iterator_t *ite
 	int rval = 1;
 
 	if (iterator->regex) {
-#if PHP_VERSION_ID >= 70300
 		rval = pcre2_match(
 			php_pcre_pce_re(iterator->pce),
 			(PCRE2_SPTR) ZSTR_VAL(entry->key), ZSTR_LEN(entry->key),
 			0, 0, iterator->re_match_data, php_pcre_mctx()) >= 0;
-#else
-		rval = pcre_exec(
-			iterator->pce->re, iterator->pce->extra,
-			ZSTR_VAL(entry->key), ZSTR_LEN(entry->key),
-			0, 0, NULL, 0) >= 0;
-#endif
 	}
 
 	if (iterator->search_hash) {
@@ -295,10 +282,8 @@ void immutable_cache_iterator_obj_init(immutable_cache_iterator_t *iterator, zva
 			iterator->regex = NULL;
 		}
 
-#if PHP_VERSION_ID >= 70300
 		iterator->re_match_data = pcre2_match_data_create_from_pattern(
 			php_pcre_pce_re(iterator->pce), php_pcre_gctx());
-#endif
 	} else if (search && Z_TYPE_P(search) == IS_ARRAY) {
 		iterator->search_hash = immutable_cache_flip_hash(Z_ARRVAL_P(search));
 	}

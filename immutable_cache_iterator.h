@@ -64,9 +64,7 @@ typedef struct _immmutable_cache_iterator_t {
 	immutable_cache_stack_t *stack;      /* stack of entries pulled from cache */
 	int stack_idx;           /* index into the current stack */
 	pcre_cache_entry *pce;     /* regex filter on entry identifiers */
-#if PHP_VERSION_ID >= 70300
 	pcre2_match_data *re_match_data; /* match data for regex */
-#endif
 	zend_string *regex;
 	HashTable *search_hash;  /* hash of keys to iterate over */
 	zend_long key_idx;            /* incrementing index for numerical keys */

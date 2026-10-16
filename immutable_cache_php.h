@@ -55,21 +55,11 @@
 #include "zend_hash.h"
 #include "zend_extensions.h"
 
-#if ZEND_MODULE_API_NO >= 20121204
 #define ZEND_ENGINE_2_5
-#endif
-#if ZEND_MODULE_API_NO >= 20100409
 #define ZEND_ENGINE_2_4
-#endif
-#if ZEND_MODULE_API_NO > 20060613
 #define ZEND_ENGINE_2_3
-#endif
-#if ZEND_MODULE_API_NO > 20050922
 #define ZEND_ENGINE_2_2
-#endif
-#if ZEND_MODULE_API_NO > 20050921
 #define ZEND_ENGINE_2_1
-#endif
 #ifdef ZEND_ENGINE_2_1
 #include "zend_vm.h"
 #endif

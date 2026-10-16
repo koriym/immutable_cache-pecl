@@ -57,13 +57,10 @@
     <file name="apc_001.phpt" role="test" />
     <file name="apc_002.phpt" role="test" />
     <file name="apc_003b.phpt" role="test" />
-    <file name="apc_003b_legacy.phpt" role="test" />
     <file name="apc_004.phpt" role="test" />
     <file name="apc_005.phpt" role="test" />
     <file name="apc_005b.phpt" role="test" />
     <file name="apc_005c.phpt" role="test" />
-    <file name="apc_006.phpt" role="test" />
-    <file name="apc_006_php73.phpt" role="test" />
     <file name="apc_006_php81.phpt" role="test" />
     <file name="apc_010.phpt" role="test" />
     <file name="apc_011.phpt" role="test" />
@@ -82,7 +79,6 @@
     <file name="apcu_fetch_empty_array_reference.phpt" role="test" />
     <file name="apc_store_array_int_keys.phpt" role="test" />
     <file name="apc_store_array_with_refs.phpt" role="test" />
-    <file name="apc_store_reference.phpt" role="test" />
     <file name="apc_store_reference_php8.phpt" role="test" />
     <file name="apc_store_string_reuse.phpt" role="test" />
     <file name="apcu_sma_info.phpt" role="test" />
@@ -118,10 +114,8 @@
     <file name="bad/abc.data" role="test" />
    </dir>
    <file name="immutable_cache_api.h" role="src" />
-   <file name="immutable_cache_arginfo.h" role="src" />
    <file name="php_immutable_cache.stub.php" role="src" />
    <file name="php_immutable_cache_arginfo.h" role="src" />
-   <file name="php_immutable_cache_legacy_arginfo.h" role="src" />
    <file name="immutable_cache.c" role="src" />
    <file name="immutable_cache_cache.c" role="src" />
    <file name="immutable_cache_cache.h" role="src" />
@@ -131,7 +125,6 @@
    <file name="immutable_cache_iterator.h" role="src" />
    <file name="immutable_cache_iterator.stub.php" role="src" />
    <file name="immutable_cache_iterator_arginfo.h" role="src" />
-   <file name="immutable_cache_iterator_legacy_arginfo.h" role="src" />
    <file name="immutable_cache_lock.c" role="src" />
    <file name="immutable_cache_lock.h" role="src" />
    <file name="immutable_cache_mmap.c" role="src" />
@@ -141,7 +134,6 @@
    <file name="immutable_cache_persist.c" role="src" />
    <file name="immutable_cache.php" role="src" />
    <file name="immutable_cache_php.h" role="src" />
-   <file name="immutable_cache_php74_shim.h" role="src" />
    <file name="immutable_cache_shm.c" role="src" />
    <file name="immutable_cache_shm.h" role="src" />
    <file name="immutable_cache_signal.c" role="src" />
@@ -170,7 +162,7 @@
  <dependencies>
   <required>
    <php>
-    <min>7.2.0</min>
+    <min>8.2.0</min>
    </php>
    <pearinstaller>
     <min>1.10</min>

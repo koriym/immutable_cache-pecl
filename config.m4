@@ -271,7 +271,7 @@ if test "$PHP_IMMUTABLE_CACHE" != "no"; then
   PHP_SUBST(IMMUTABLE_CACHE_SHARED_LIBADD)
   PHP_SUBST(IMMUTABLE_CACHE_CFLAGS)
   PHP_SUBST(PHP_LDFLAGS)
-  PHP_INSTALL_HEADERS(ext/immutable_cache, [php_immutable_cache.h immutable_cache.h immutable_cache_api.h immutable_cache_cache.h immutable_cache_globals.h immutable_cache_iterator.h immutable_cache_lock.h immutable_cache_mutex.h immutable_cache_sma.h immutable_cache_serializer.h immutable_cache_stack.h immutable_cache_arginfo.h php_immutable_cache_legacy_arginfo.h])
+  PHP_INSTALL_HEADERS(ext/immutable_cache, [php_immutable_cache.h immutable_cache.h immutable_cache_api.h immutable_cache_cache.h immutable_cache_globals.h immutable_cache_iterator.h immutable_cache_lock.h immutable_cache_mutex.h immutable_cache_sma.h immutable_cache_serializer.h immutable_cache_stack.h])
   AC_DEFINE(HAVE_IMMUTABLE_CACHE, 1, [ ])
 fi
 
