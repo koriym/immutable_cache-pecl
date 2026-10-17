@@ -62,6 +62,7 @@
     <file name="apc_005b.phpt" role="test" />
     <file name="apc_005c.phpt" role="test" />
     <file name="apc_006_php81.phpt" role="test" />
+    <file name="apc_006_php85.phpt" role="test" />
     <file name="apc_010.phpt" role="test" />
     <file name="apc_011.phpt" role="test" />
     <file name="apc_013_exists.phpt" role="test" />
