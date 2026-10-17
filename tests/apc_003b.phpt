@@ -3,7 +3,6 @@ APC: immutable_cache_add/fetch with objects
 --SKIPIF--
 <?php
 require_once(dirname(__FILE__) . '/skipif.inc');
-if (PHP_VERSION_ID < 80100) die("skip For PHP >= 8.1");
 ?>
 --INI--
 immutable_cache.enabled=1

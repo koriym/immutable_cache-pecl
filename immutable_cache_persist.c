@@ -29,25 +29,11 @@
 #include "immutable_cache.h"
 #include "immutable_cache_cache.h"
 
-/* TODO Look into whether macros and functionality can be made to work in PHP < 8.0
- * with true immutability. */
-
-#if PHP_VERSION_ID < 70300
-# define GC_SET_REFCOUNT(ref, rc) (GC_REFCOUNT(ref) = (rc))
-# define GC_ADDREF(ref) GC_REFCOUNT(ref)++
-# define GC_ARRAY_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & (IS_ARRAY_IMMUTABLE)) == IS_ARRAY_IMMUTABLE)
-# define GC_STR_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & (IS_STR_INTERNED|IS_STR_PERSISTENT)) == (IS_STR_INTERNED|IS_STR_PERSISTENT))
-#else
-# define GC_SET_PERSISTENT_TYPE(ref, type) \
+#define GC_SET_PERSISTENT_TYPE(ref, type) \
 	(GC_TYPE_INFO(ref) = type | (GC_PERSISTENT << GC_FLAGS_SHIFT))
-# define GC_IMMUTABLE_PERSISTENT_FLAGS (GC_IMMUTABLE | GC_PERSISTENT)
-# define GC_ARRAY_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & GC_IMMUTABLE_PERSISTENT_FLAGS) == GC_IMMUTABLE_PERSISTENT_FLAGS)
-# define GC_STR_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & GC_IMMUTABLE_PERSISTENT_FLAGS) == GC_IMMUTABLE_PERSISTENT_FLAGS)
-#endif
-
-#if PHP_VERSION_ID < 80000
-# define GC_REFERENCE IS_REFERENCE
-#endif
+#define GC_IMMUTABLE_PERSISTENT_FLAGS (GC_IMMUTABLE | GC_PERSISTENT)
+#define GC_ARRAY_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & GC_IMMUTABLE_PERSISTENT_FLAGS) == GC_IMMUTABLE_PERSISTENT_FLAGS)
+#define GC_STR_HAS_IMMUTABLE_PERSISTENT_FLAGS(ref) ((GC_FLAGS((ref)) & GC_IMMUTABLE_PERSISTENT_FLAGS) == GC_IMMUTABLE_PERSISTENT_FLAGS)
 
 /*
  * PERSIST: Copy from request memory to SHM.
@@ -164,7 +150,6 @@ static zend_bool immutable_cache_persist_calc_ht(immutable_cache_persist_context
 	}
 
 	/* TODO Too sparse hashtables could be compacted here */
-#if PHP_VERSION_ID >= 80200
 	if (HT_IS_PACKED(ht)) {
 		ADD_SIZE(HT_PACKED_USED_SIZE(ht));
 		for (idx = 0; idx < ht->nNumUsed; idx++) {
@@ -175,7 +160,6 @@ static zend_bool immutable_cache_persist_calc_ht(immutable_cache_persist_context
 			}
 		}
 	} else
-#endif
 	{
 		ADD_SIZE(HT_USED_SIZE(ht));
 		for (idx = 0; idx < ht->nNumUsed; idx++) {
@@ -317,11 +301,7 @@ static zend_string *immutable_cache_persist_copy_cstr(
 	zend_string *str = ALLOC(_ZSTR_STRUCT_SIZE(buf_len));
 
 	GC_SET_REFCOUNT(str, 2);
-#if PHP_VERSION_ID >= 70300
 	GC_TYPE_INFO(str) = IS_STRING | (GC_IMMUTABLE_PERSISTENT_FLAGS << GC_FLAGS_SHIFT);
-#else
-	GC_TYPE_INFO(str) = IS_STRING | ((IS_STR_INTERNED|IS_STR_PERSISTENT) << GC_FLAGS_SHIFT);
-#endif
 
 	ZSTR_H(str) = hash;
 	ZSTR_LEN(str) = buf_len;
@@ -383,31 +363,17 @@ static zend_array *immutable_cache_persist_copy_ht(immutable_cache_persist_conte
 	immutable_cache_persist_add_already_allocated(ctxt, orig_ht, ht);
 
 	GC_SET_REFCOUNT(ht, 2);
-#if PHP_VERSION_ID >= 70300
 	GC_TYPE_INFO(ht) = IS_ARRAY | (GC_IMMUTABLE_PERSISTENT_FLAGS << GC_FLAGS_SHIFT);
-#else
-	GC_TYPE_INFO(ht) = IS_ARRAY | (IS_ARRAY_IMMUTABLE << GC_FLAGS_SHIFT);
-#endif
 
 	/* Immutable arrays from opcache may lack a dtor and the apply protection flag. */
 	/* NOTE: immutable arrays immutable_cache should not have elements freed by design. This won't get called. */
 	ht->pDestructor = NULL; // ht->pDestructor = ZVAL_PTR_DTOR;
 
-#if PHP_VERSION_ID < 70300
-	/* Unlike APCu, this is immutable and does not need protection */
-	ht->u.flags &= ~HASH_FLAG_APPLY_PROTECTION;
-#endif
-
-
 	/* NOTE: Strings are always static keys here for serializer=default (immutable instead of refcounted), unlike APCu. */
 	ht->u.flags |= HASH_FLAG_STATIC_KEYS;
 	if (ht->nNumUsed == 0) {
 		/* TODO save memory (44 bytes per array padded to alignment) by storing a copy of the empty zend_array at a fixed position on startup */
-#if PHP_VERSION_ID >= 70400
 		ht->u.flags = HASH_FLAG_UNINITIALIZED;
-#else
-		ht->u.flags &= ~(HASH_FLAG_INITIALIZED|HASH_FLAG_PACKED);
-#endif
 		ht->nNextFreeElement = 0;
 		ht->nTableMask = HT_MIN_MASK;
 		HT_SET_DATA_ADDR(ht, &uninitialized_bucket);
@@ -417,7 +383,6 @@ static zend_array *immutable_cache_persist_copy_ht(immutable_cache_persist_conte
 	ht->nNextFreeElement = 0;
 	ht->nInternalPointer = HT_INVALID_IDX;
 	const uint32_t nNumUsed = ht->nNumUsed;
-#if PHP_VERSION_ID >= 80200
 	if (HT_IS_PACKED(ht)) {
 		HT_SET_DATA_ADDR(ht, COPY(HT_GET_DATA_ADDR(ht), HT_PACKED_USED_SIZE(ht)));
 		zval *const arPacked = ht->arPacked;
@@ -436,7 +401,6 @@ static zend_array *immutable_cache_persist_copy_ht(immutable_cache_persist_conte
 			immutable_cache_persist_copy_zval(ctxt, val);
 		}
 	} else
-#endif
 	{
 		/* NOTE: The extendsions opcache, APCu, and immutable_cache
 		 * only need to allocate memory for the buckets that are used in shared memory */
@@ -679,20 +643,12 @@ static zend_array *immutable_cache_unpersist_ht(
 	immutable_cache_unpersist_add_already_copied(ctxt, orig_ht, ht);
 	memcpy(ht, orig_ht, sizeof(HashTable));
 	GC_TYPE_INFO(ht) = GC_ARRAY;
-#if PHP_VERSION_ID >= 70300
 	/* Caller used ZVAL_EMPTY_ARRAY and set different zval flags instead */
 	ZEND_ASSERT(ht->nNumOfElements > 0 && ht->nNumUsed > 0);
-#else
-	if (ht->nNumUsed == 0) {
-		HT_SET_DATA_ADDR(ht, &uninitialized_bucket);
-		return ht;
-	}
-#endif
 
 	HT_SET_DATA_ADDR(ht, emalloc(immutable_cache_compute_ht_data_size(ht)));
 	memcpy(HT_GET_DATA_ADDR(ht), HT_GET_DATA_ADDR(orig_ht), HT_HASH_SIZE(ht->nTableMask));
 
-#if PHP_VERSION_ID >= 80200
 	if (HT_IS_PACKED(ht)) {
 		zval *p = ht->arPacked, *q = orig_ht->arPacked, *p_end = p + ht->nNumUsed;
 		for (; p < p_end; p++, q++) {
@@ -700,7 +656,6 @@ static zend_array *immutable_cache_unpersist_ht(
 			immutable_cache_unpersist_zval(ctxt, p);
 		}
 	} else
-#endif
 	if (ht->u.flags & HASH_FLAG_STATIC_KEYS) {
 		Bucket *p = ht->arData, *q = orig_ht->arData, *p_end = p + ht->nNumUsed;
 		for (; p < p_end; p++, q++) {
@@ -748,12 +703,10 @@ static void immutable_cache_unpersist_zval_impl(immutable_cache_unpersist_contex
 			/* Z_REF_P(zv) = immutable_cache_unpersist_ref(ctxt, Z_REF_P(zv)); */
 			return;
 		case IS_ARRAY:
-#if PHP_VERSION_ID >= 70300
 			if (Z_ARR_P(zv)->nNumOfElements == 0) {
 				ZVAL_EMPTY_ARRAY(zv); /* #323 */
 				return;
 			}
-#endif
 			Z_ARR_P(zv) = immutable_cache_unpersist_ht(ctxt, Z_ARR_P(zv));
 			return;
 		default:

@@ -44,9 +44,8 @@
 
 #include "php_version.h"
 
-#if PHP_VERSION_ID < 70200
-/* Not tested yet, this may crash in older php versions */
-#error This release of immutable_cache only supports php 7.2+
+#if PHP_VERSION_ID < 80200
+#error This release of immutable_cache only supports php 8.2+
 #endif
 
 /*
