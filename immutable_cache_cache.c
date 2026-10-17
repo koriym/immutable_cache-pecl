@@ -55,7 +55,6 @@
 #include "igbinary/igbinary.h"
 #endif
 
-
 /* If recursive mutexes are used, there is no distinction between read and write locks.
  * As such, if we acquire a read-lock, it's really a write-lock and we are free to perform
  * increments without atomics. */

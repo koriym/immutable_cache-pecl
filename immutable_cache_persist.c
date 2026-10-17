@@ -369,8 +369,6 @@ static zend_array *immutable_cache_persist_copy_ht(immutable_cache_persist_conte
 	/* NOTE: immutable arrays immutable_cache should not have elements freed by design. This won't get called. */
 	ht->pDestructor = NULL; // ht->pDestructor = ZVAL_PTR_DTOR;
 
-
-
 	/* NOTE: Strings are always static keys here for serializer=default (immutable instead of refcounted), unlike APCu. */
 	ht->u.flags |= HASH_FLAG_STATIC_KEYS;
 	if (ht->nNumUsed == 0) {
